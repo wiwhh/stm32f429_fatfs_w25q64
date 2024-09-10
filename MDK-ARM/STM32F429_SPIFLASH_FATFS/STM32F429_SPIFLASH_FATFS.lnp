@@ -37,6 +37,10 @@
 "stm32f429_spiflash_fatfs\heap_4.o"
 "stm32f429_spiflash_fatfs\port.o"
 "stm32f429_spiflash_fatfs\w25qxx.o"
+"stm32f429_spiflash_fatfs\diskio.o"
+"stm32f429_spiflash_fatfs\ff.o"
+"stm32f429_spiflash_fatfs\ffsystem.o"
+"stm32f429_spiflash_fatfs\ffunicode.o"
 --library_type=microlib --strict --scatter "STM32F429_SPIFLASH_FATFS\STM32F429_SPIFLASH_FATFS.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

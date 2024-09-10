@@ -49,3 +49,5 @@ stm32f429_spiflash_fatfs\main.o: ../Core/Inc/gpio.h
 stm32f429_spiflash_fatfs\main.o: D:\Program Files\keil\ARM\AC506u7\Bin\..\include\stdio.h
 stm32f429_spiflash_fatfs\main.o: ..\Drivers\W25Qxx\w25qxx.h
 stm32f429_spiflash_fatfs\main.o: D:\Program Files\keil\ARM\AC506u7\Bin\..\include\string.h
+stm32f429_spiflash_fatfs\main.o: ..\Drivers\Fatfs\ff.h
+stm32f429_spiflash_fatfs\main.o: ..\Drivers\Fatfs\ffconf.h

@@ -26,20 +26,20 @@
 #define SPI_CS_LOW HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, 0)
 #define SPI_CS_HIGH HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, 1)
 
-uint8_t spi_SwapByte(uint8_t TxData);
-void spi_send_some_bytes(uint8_t *pbdata, uint16_t send_length);
-void spi_recv_some_bytes(uint8_t *pbdata, uint16_t recv_length);
-void w25qxx_WriteEnable(void);
-void w25qxx_WriteDisable(void);
-uint8_t w25qxx_ReadSR(void);
-void w25qxx_WaitNobusy(void);
+static uint8_t spi_SwapByte(uint8_t TxData);
+static void spi_send_some_bytes(uint8_t *pbdata, uint16_t send_length);
+static void spi_recv_some_bytes(uint8_t *pbdata, uint16_t recv_length);
+static void w25qxx_WriteEnable(void);
+static void w25qxx_WriteDisable(void);
+static uint8_t w25qxx_ReadSR(void);
+static void w25qxx_WaitNobusy(void);
 void w25qxx_ReadSomeBytes(uint8_t *ucpBuffer, uint32_t _ulReadAddr, uint16_t _usNByte);
 void w25qxx_FastReadByte(uint8_t *ucpBuffer, uint32_t _ulReadAddr, uint16_t _usNByte);
 void w25qxx_WritePage(uint8_t *ucpBuffer, uint32_t _ulWriteAddr, uint16_t _usNByte);
 void w25qxx_SectorErase(unsigned long Addr);
-
-
-
+void w25Qxx_Erase_Chip(void);
+void w25Qxx_Write(uint8_t* pBuffer, uint32_t WriteAddr, uint32_t NumByteToWrite);
+void w25Qxx_Write_NoCheck(uint8_t* pBuffer, uint32_t WriteAddr,uint16_t NumByteToWrite);
 
 
 

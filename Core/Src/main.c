@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include "w25qxx.h"
 #include <string.h>
+#include "ff.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -94,19 +95,52 @@ int main(void)
   MX_SPI5_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t mun1 = 32;
-  uint8_t mun2;
-	w25qxx_SectorErase(0x000000);
-	HAL_Delay(1000);
-	w25qxx_ReadSomeBytes(&mun2, 0x000001, 1);
-	 printf("read data:%d\r\n",mun2);
-  // w25qxx_SectorErase(0x000001);
-	// printf("SectorErase!\r\n");
-  // w25qxx_WritePage(&mun1, 0x000001, 1);
-  // w25qxx_ReadSomeBytes(&mun2, 0x000001, 1);
-  // printf("write data:%d\r\n",mun2);
+  // uint8_t mun1 = 32;
+  // uint8_t mun2 = 12;
+  // uint8_t buff2[4097];
+	//w25qxx_SectorErase(0x000000);
+  //w25qxx_SectorErase((0x000000+4097)/4096);
+  //w25qxx_ReadSomeBytes(buff2, 0x000000, 4097);
+  // for(int i =0;i<4097; i++)
+  // {
+  //   //printf("%x ",buff2[i]);
+  // }
+  printf("\r\nhellow world!\r\n ");
+  // uint8_t buff1[4097] = {0};
+  // w25Qxx_Write(buff1,0x000008,4096);
+  // HAL_Delay(1000);
+  // w25qxx_ReadSomeBytes(buff2, 0x000000, 4096);
+  // for(int i =0;i<4096; i++)
+  // {
+  //   printf("%x ",buff2[i]);
+  // }
+  // printf("hellow world!\r\n ");
+  FATFS fs;//文件系统对象
+  FIL fp;//文件对象
+  char *write_text="FATFS test success!";
+  unsigned int write_bytes=0;
+  if(!f_mount(&fs,"0:",0))//挂载外部FLASH)
+	{
+		printf("mount success!\n");
+	}
+	else printf("mount failure!\n");
 
+  if(!f_open(&fp,"0:test.txt",FA_CREATE_ALWAYS | FA_WRITE))
+  {
+    printf("open file success!\n");
+  }
+  else printf("open file failure!\n");
 
+  if(!f_write(&fp,(char*)write_text,strlen(write_text),&write_bytes))
+  {
+    printf("write success,write_bytes=%d\n",write_bytes);
+  }
+  else printf("write failure!\n");
+  if(!f_close(&fp))
+  {
+    printf("close success!\n");
+  }
+  else printf("close failure!\n");
   /* USER CODE END 2 */
 
   /* Init scheduler */
