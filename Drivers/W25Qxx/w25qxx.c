@@ -191,7 +191,6 @@ void w25qxx_FastReadByte(uint8_t *ucpBuffer, uint32_t _ulReadAddr, uint16_t _usN
 ********************************************************************************/
 void w25qxx_WritePage(uint8_t *ucpBuffer, uint32_t _ulWriteAddr, uint16_t _usNByte)
 {
-	//printf("!!ad:%X,nb:%d\r\n",_ulWriteAddr,_usNByte);//测试用
 	uint8_t command = 0x02;
 	uint8_t temp_buff[3] = {0};
 
@@ -199,7 +198,6 @@ void w25qxx_WritePage(uint8_t *ucpBuffer, uint32_t _ulWriteAddr, uint16_t _usNBy
 	temp_buff[1] = (uint8_t)(_ulWriteAddr >> 8);
 	temp_buff[2] = (uint8_t)(_ulWriteAddr >> 0);
 	w25qxx_WriteEnable();	//写使能
-	w25qxx_WaitNobusy();
 	SPI_CS_LOW;
 	spi_SwapByte(command);
 	spi_send_some_bytes(temp_buff,3);
@@ -281,34 +279,33 @@ void w25Qxx_Write_NoCheck(uint8_t* pBuffer, uint32_t WriteAddr,uint16_t NumByteT
 	};	    
 } 
 
-uint8_t W25QXX_BUFFER[4096];		 
+		 
 void w25Qxx_Write(uint8_t* pBuffer, uint32_t WriteAddr, uint32_t NumByteToWrite)   
 { 
+	uint8_t W25QXX_BUFFER[4096];
 	uint32_t secpos;
 	uint16_t secoff;
 	uint16_t secremain;	   
- 	uint16_t i;    
-	uint8_t * W25QXX_BUF;	  
-   	W25QXX_BUF = W25QXX_BUFFER;	     
+ 	uint16_t i;        
  	secpos = WriteAddr/4096;//扇区地址  
 	secoff = WriteAddr%4096;//在扇区内的偏移
 	secremain = 4096-secoff;//扇区剩余空间大小
  	if(NumByteToWrite<=secremain)secremain=NumByteToWrite;//不大于4096个字节
 	while(1) 
 	{	
-		w25qxx_ReadSomeBytes(W25QXX_BUF,secpos*4096,4096);//读出整个扇区的内容
+		w25qxx_ReadSomeBytes(W25QXX_BUFFER,secpos*4096,4096);//读出整个扇区的内容
 		for(i=0;i<secremain;i++)//校验数据
 		{
-			if(W25QXX_BUF[secoff+i]!=0XFF)break;//需要擦除  	  
+			if(W25QXX_BUFFER[secoff+i]!=0XFF)break;//需要擦除  	  
 		}
 		if(i<secremain)//需要擦除
 		{
 			w25qxx_SectorErase(secpos);//擦除这个扇区
 			for(i=0;i<secremain;i++)	   //复制
 			{
-				W25QXX_BUF[i+secoff]=pBuffer[i]; 
+				W25QXX_BUFFER[i+secoff]=pBuffer[i]; 
 			}
-			w25Qxx_Write_NoCheck(W25QXX_BUF,secpos*4096,4096);//写入整个扇区  
+			w25Qxx_Write_NoCheck(W25QXX_BUFFER,secpos*4096,4096);//写入整个扇区  
 
 		}
 		else 

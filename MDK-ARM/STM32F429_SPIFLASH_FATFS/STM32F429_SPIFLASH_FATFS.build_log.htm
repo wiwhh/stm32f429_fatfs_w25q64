@@ -27,11 +27,34 @@ Project File Date:  09/10/2024
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Program Files\keil\ARM\AC506u7\Bin'
 Build target 'STM32F429_SPIFLASH_FATFS'
+compiling ffsystem.c...
+compiling ffunicode.c...
+compiling ff.c...
+compiling diskio.c...
 compiling main.c...
+../Core/Src/main.c(116): warning:  #870-D: invalid multibyte character sequence
+  		printf("》FLASH还没有文件系统，即将进行格式�?...\r\n");
+../Core/Src/main.c(143): warning:  #870-D: invalid multibyte character sequence
+  		printf("！！外部Flash挂载文件系统失败�?(%d)\r\n",res_flash);
+../Core/Src/main.c(145): warning:  #870-D: invalid multibyte character sequence
+  		printf("请下�? SPI—读写串行FLASH 例程测试，如果正常，在该例程f_mount语句下if语句前临时多添加一�? res_flash = FR_NO_FILESYSTEM; 让重新直接执行格式化流程\r\n");
+../Core/Src/main.c(145): warning:  #870-D: invalid multibyte character sequence
+  		printf("请下�? SPI—读写串行FLASH 例程测试，如果正常，在该例程f_mount语句下if语句前临时多添加一�? res_flash = FR_NO_FILESYSTEM; 让重新直接执行格式化流程\r\n");
+../Core/Src/main.c(164): warning:  #870-D: invalid multibyte character sequence
+  		  printf("》文件写入成功，写入字节数据�?%d\n",fnum);
+../Core/Src/main.c(169): warning:  #870-D: invalid multibyte character sequence
+  		  printf("！！文件写入失败�?(%d)\n",res_flash);
+../Core/Src/main.c(189): warning:  #870-D: invalid multibyte character sequence
+  			printf("》文件读取成�?,读到字节数据�?%d\r\n",fnum);
+../Core/Src/main.c(189): warning:  #870-D: invalid multibyte character sequence
+  			printf("》文件读取成�?,读到字节数据�?%d\r\n",fnum);
+../Core/Src/main.c(194): warning:  #870-D: invalid multibyte character sequence
+  			printf("！！文件读取失败�?(%d)\n",res_flash);
+../Core/Src/main.c: 9 warnings, 0 errors
 linking...
-Program Size: Code=18084 RO-data=532 RW-data=160 ZI-data=23992  
+Program Size: Code=22964 RO-data=1944 RW-data=160 ZI-data=19896  
 FromELF: creating hex file...
-"STM32F429_SPIFLASH_FATFS\STM32F429_SPIFLASH_FATFS.axf" - 0 Error(s), 0 Warning(s).
+"STM32F429_SPIFLASH_FATFS\STM32F429_SPIFLASH_FATFS.axf" - 0 Error(s), 9 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -54,7 +77,7 @@ Package Vendor: GigaDevice
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE:5.6.0
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>

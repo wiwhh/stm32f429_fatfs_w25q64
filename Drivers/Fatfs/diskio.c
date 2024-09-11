@@ -60,13 +60,7 @@ DRESULT disk_read (
 
 	if(pdrv == DEV_FLASH) 
 	{
-
-		while(count--)
-		{
-			w25qxx_ReadSomeBytes(buff, sector*FLASH_SECTOR_SIZE, FLASH_SECTOR_SIZE);
-			sector++;
-			buff+=FLASH_SECTOR_SIZE;
-		}
+		w25qxx_ReadSomeBytes(buff, sector*FLASH_SECTOR_SIZE, count*FLASH_SECTOR_SIZE);
 		return RES_OK;
 	
 	}
@@ -90,15 +84,8 @@ DRESULT disk_write (
 {
 	if(pdrv == DEV_FLASH) 
 	{
-
-		while(count--)
-		{
-			w25Qxx_Write((uint8_t*)buff, sector*FLASH_SECTOR_SIZE, FLASH_SECTOR_SIZE);
-			sector++;
-			buff+=FLASH_SECTOR_SIZE;
-		}
+		w25Qxx_Write((uint8_t*)buff, sector*FLASH_SECTOR_SIZE,count*FLASH_SECTOR_SIZE);
 		return RES_OK;
-	
 	}
 	return RES_PARERR;
 }
@@ -121,13 +108,11 @@ DRESULT disk_ioctl (
 		switch (cmd)
 		{
 			case CTRL_SYNC: return RES_OK;
-			case GET_SECTOR_COUNT: *(uint32_t *)buff = FLASH_SECTOR_COUNT;
-			return RES_OK;
-			case GET_SECTOR_SIZE: *(uint32_t *)buff = FLASH_SECTOR_SIZE;
-			return RES_OK;
-			case GET_BLOCK_SIZE: *(uint32_t *)buff = FLASH_BLOCK_SIZE;
-			return RES_OK;
+			case GET_SECTOR_COUNT: *(uint32_t *)buff = FLASH_SECTOR_COUNT;break;
+			case GET_SECTOR_SIZE: *(uint32_t *)buff = FLASH_SECTOR_SIZE;break;
+			case GET_BLOCK_SIZE: *(uint32_t *)buff = FLASH_BLOCK_SIZE;break;
 		}
+		return RES_OK;
 	}
 	return RES_PARERR;
 }

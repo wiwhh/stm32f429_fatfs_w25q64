@@ -95,52 +95,119 @@ int main(void)
   MX_SPI5_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  // uint8_t mun1 = 32;
-  // uint8_t mun2 = 12;
-  // uint8_t buff2[4097];
-	//w25qxx_SectorErase(0x000000);
-  //w25qxx_SectorErase((0x000000+4097)/4096);
-  //w25qxx_ReadSomeBytes(buff2, 0x000000, 4097);
-  // for(int i =0;i<4097; i++)
-  // {
-  //   //printf("%x ",buff2[i]);
-  // }
-  printf("\r\nhellow world!\r\n ");
-  // uint8_t buff1[4097] = {0};
-  // w25Qxx_Write(buff1,0x000008,4096);
-  // HAL_Delay(1000);
-  // w25qxx_ReadSomeBytes(buff2, 0x000000, 4096);
-  // for(int i =0;i<4096; i++)
-  // {
-  //   printf("%x ",buff2[i]);
-  // }
-  // printf("hellow world!\r\n ");
-  FATFS fs;//文件系统对象
-  FIL fp;//文件对象
-  char *write_text="FATFS test success!";
-  unsigned int write_bytes=0;
-  if(!f_mount(&fs,"0:",0))//挂载外部FLASH)
+  FATFS fs;						/* FatFs文件系统对象 */
+  FIL fnew;						/* 文件对象 */
+  FRESULT res_flash;              /* 文件操作结果 */
+  UINT fnum;            			/* 文件成功读写数量 */
+  BYTE ReadBuffer[1024]={0};      /* 读缓冲区 */
+  BYTE WriteBuffer[] = "welcome to use YeHuo board, this is a file system test.\r\n";            /* 写缓冲区*/
+  BYTE work[FF_MAX_SS];  // 工作缓冲区
+  MKFS_PARM opt = {
+      .fmt = FM_FAT|FM_SFD,
+      .n_fat = 1,
+      .align = 0,
+      .n_root = 0,
+      .au_size = 0
+  };
+  
+	res_flash = f_mount(&fs, "0:", 1);
+if (res_flash == FR_NO_FILESYSTEM)
 	{
-		printf("mount success!\n");
+		printf("》FLASH还没有文件系统，即将进行格式化...\r\n");
+		
+		res_flash = f_mkfs("0:", &opt, work, sizeof(work));
+		
+		if (res_flash == FR_OK)
+		{
+			printf("》FLASH已成功格式化文件系统。\r\n");
+			res_flash = f_mount(NULL, "0:", 1);
+			res_flash = f_mount(&fs, "0:", 1);
+			if (res_flash == FR_OK)
+			{
+				printf("格式化后挂载成功\r\n");
+			}
+			else
+			{
+				printf("格式化后挂载失败, err = %d\r\n", res_flash);
+			}
+		}
+		else
+		{
+			printf("《《格式化失败。》》\r\n");
+			printf("errcode = %d\r\n", res_flash);
+			while(1);
+		}
 	}
-	else printf("mount failure!\n");
+	else if (res_flash!=FR_OK)
+	{
+		printf("！！外部Flash挂载文件系统失败。(%d)\r\n",res_flash);
+		printf("！！可能原因：SPI Flash初始化不成功。\r\n");
+		printf("请下载 SPI—读写串行FLASH 例程测试，如果正常，在该例程f_mount语句下if语句前临时多添加一句 res_flash = FR_NO_FILESYSTEM; 让重新直接执行格式化流程\r\n");
+		while(1);
+	}
+	else
+	{
+		printf("》文件系统挂载成功，可以进行读写测试\r\n");
+	}
+/*----------------------- 文件系统测试：写测试 -------------------*/
+	/* 打开文件，每次都以新建的形式打开，属性为可写 */
+	printf("\r\n****** 即将进行文件写入测试... ******\r\n");	
+	res_flash = f_open(&fnew, "0:/test1.txt",FA_CREATE_ALWAYS | FA_WRITE );
+	printf("/******************************************************/\r\n");
+	if ( res_flash == FR_OK )
+	{
+		printf("》打开/创建test1.txt文件成功，向文件写入数据。\r\n");
+		/* 将指定存储区内容写入到文件内 */
+		res_flash=f_write(&fnew,WriteBuffer,sizeof(WriteBuffer),&fnum);
+		if(res_flash == FR_OK)
+		{
+		  printf("》文件写入成功，写入字节数据：%d\n",fnum);
+		  printf("》向文件写入的数据为：\r\n%s\r\n",WriteBuffer);
+		}
+		else
+		{
+		  printf("！！文件写入失败：(%d)\n",res_flash);
+		}    
+			/* 不再读写，关闭文件 */
+		f_close(&fnew);
+	}
+	else
+	{	
+		printf("！！打开/创建文件失败。\r\n");
+	}
+	
+	/*----------------------- 文件系统测试：读测试 -------------------*/
+	printf("\r\n****** 即将进行文件读取测试... ******\r\n");	
+	res_flash = f_open(&fnew, "0:/test1.txt", FA_OPEN_EXISTING|FA_READ );
+	if ( res_flash == FR_OK )
+	{
+		printf("》打开文件成功。\r\n");
+		
+		res_flash=f_read(&fnew,ReadBuffer,sizeof(ReadBuffer),&fnum);
+		if(res_flash == FR_OK)
+		{
+			printf("》文件读取成功,读到字节数据：%d\r\n",fnum);
+			printf("》读取得的文件数据为：\r\n%s \r\n", ReadBuffer);
+		}
+		else
+		{
+			printf("！！文件读取失败：(%d)\n",res_flash);
+		}    
+	}
+	else
+	{	
+		printf("！！打开文件失败。\r\n");
+	}
+	/* 不再读写，关闭文件 */
+	f_close(&fnew);
+	
+	/* 不再使用文件系统，取消挂载文件系统 */
+	f_mount(NULL, "0:", 1);
 
-  if(!f_open(&fp,"0:test.txt",FA_CREATE_ALWAYS | FA_WRITE))
-  {
-    printf("open file success!\n");
-  }
-  else printf("open file failure!\n");
 
-  if(!f_write(&fp,(char*)write_text,strlen(write_text),&write_bytes))
-  {
-    printf("write success,write_bytes=%d\n",write_bytes);
-  }
-  else printf("write failure!\n");
-  if(!f_close(&fp))
-  {
-    printf("close success!\n");
-  }
-  else printf("close failure!\n");
+
+
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
